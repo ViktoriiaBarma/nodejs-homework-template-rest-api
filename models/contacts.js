@@ -3,7 +3,7 @@ const uuid = require("uuid").v4;
 const path = require("path");
 
 const contactsPath = path.join(__dirname, 'contacts.json')
-console.log(contactsPath)
+
 
 const writeContacts = async (contacts) => {
   return await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
