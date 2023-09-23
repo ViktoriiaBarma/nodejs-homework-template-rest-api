@@ -1,11 +1,15 @@
 const Joi = require("joi");
 
-const schema = Joi.object({
-  name: Joi.string().min(3).max(12).required(),
-  email: Joi.string().email().required(),
-  phone: Joi.number().required(),
-});
+exports.schema = (data) =>
+  Joi.object()
+    .options({ abortEarly: false })
+    .keys({
+      name: Joi.string().required().messages({ 'any.required': `missing required name field`}),
+      phone: Joi.number().required(),
+      email: Joi.string().email().required(),
+    })
+    .validate(data);
 
-module.exports = {
-  schema,
-};
+// module.exports = {
+//   schema,
+// };
