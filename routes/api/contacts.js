@@ -1,25 +1,101 @@
-const express = require('express')
+const express = require("express");
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+  updateContact,
+} = require("../../models/contacts");
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const { schema } = require("../../validators/validate");
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get("/", async (req, res, next) => {
+  try {
+    const contacts = await listContacts();
+    res.status(200).json(contacts);
+  } catch (error) {
+    next(error);
+  }
+});
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get("/:id", async (req, res, next) => {
+  try {
+    const contact = await getContactById(req.params.id);
 
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+    if (!contact) {
+      return res.status(404).json({ message: "Contact not found" });
+    }
 
-module.exports = router
+    if (contact) {
+      res.status(200).json(contact);
+    } else {
+      res.status(404).json({ message: "Not found" });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/", async (req, res, next) => {
+  try {
+    const { error } = schema(req.body);
+    if (error) {
+      return res.status(400).json({
+        message: error.message,
+      });
+    }
+
+    const newContact = await addContact(req.body);
+    res.status(201).json(newContact);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const result = await removeContact(req.params.id);
+
+    result
+      ? res.status(200).json({ message: "contact deleted" })
+      : res.status(404).json({ message: "Not found" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/:id", async (req, res, next) => {
+  try {
+    if (Object.keys(req.body).length < 2) {
+      return res.status(400).json({ message: `missing fields` });
+    }
+
+    const { error } = schema(req.body);
+    if (error) {
+      return res
+        .status(400)
+        .json({
+          message: error.message,
+        });
+    }
+
+    const updatedContact = await updateContact(req.params.id, req.body);
+
+    updatedContact
+      ? res.status(200).json(updatedContact)
+      : res.status(404).json({ message: "Not found" });
+
+    // if (updatedContact) {
+    //   res.status(200).json(updatedContact);
+    // } else {
+    //   res.status(404).json({ message: 'Not found' });
+    // }
+  } catch (error) {
+    next(error);
+  }
+});
+
+module.exports = router;
