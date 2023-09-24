@@ -21,9 +21,9 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:contactId", async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
-    const contact = await getContactById(req.params.contactId);
+    const contact = await getContactById(req.params.id);
 
     if (!contact) {
       return res.status(404).json({ message: "Contact not found" });
@@ -44,7 +44,7 @@ router.post("/", async (req, res, next) => {
     const { error } = schema(req.body);
     if (error) {
       return res.status(400).json({
-        message: `missing required ${error.details[0].path[0]} field`,
+        message: error.message,
       });
     }
 
@@ -55,9 +55,9 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:contactId", async (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
-    const result = await removeContact(req.params.contactId);
+    const result = await removeContact(req.params.id);
 
     result
       ? res.status(200).json({ message: "contact deleted" })
@@ -67,7 +67,7 @@ router.delete("/:contactId", async (req, res, next) => {
   }
 });
 
-router.put("/:contactId", async (req, res, next) => {
+router.put("/:id", async (req, res, next) => {
   try {
     if (Object.keys(req.body).length < 2) {
       return res.status(400).json({ message: `missing fields` });
@@ -78,11 +78,11 @@ router.put("/:contactId", async (req, res, next) => {
       return res
         .status(400)
         .json({
-          message: `missing required ${error.details[0].path[0]} field`,
+          message: error.message,
         });
     }
 
-    const updatedContact = await updateContact(req.params.contactId, req.body);
+    const updatedContact = await updateContact(req.params.id, req.body);
 
     updatedContact
       ? res.status(200).json(updatedContact)
