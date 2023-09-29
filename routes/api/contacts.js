@@ -3,23 +3,23 @@ const router = express.Router();
 
 const contacts = require("../../controllers/contacts");
 
-const {
-  isValidId,
-} = require("../../middlewares");
+// const {
+//   isValidId,
+// } = require("../../middelwares");
 
-router.get("/", contacts.getAllContacts);
+router.get("/", contacts.getContacts);
 
-router.get("/:id", isValidId, contacts.getContactById);
+router.get("/:id",  contacts.getContactById);
 
 router.post("/", contacts.addContact);
 
-router.delete("/:id", isValidId, contacts.deleteContactById);
+router.delete("/:id", contacts.deleteContactById);
 
-router.put("/:id", isValidId, contacts.updateContactById);
+router.put("/:id",  contacts.updateContactById);
 
 router.patch(
   "/:id/favorite",
-  isValidId,
+
   contacts.updateFavorite
 );
 
