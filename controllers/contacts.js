@@ -20,7 +20,7 @@ exports.getContactById = catchAsync(async (req, res) => {
 
 exports.addContact = catchAsync(async (req, res) => {
 
-   const { error } = schema.validate(req.body);
+   const { error } = schema(req.body);
     if (error) {
       handleError(400, `${error.message}`);
     }
@@ -47,7 +47,7 @@ exports.updateContactById = catchAsync(async (req, res) => {
       return req.route.methods.patch ? handleError(400, "missing field favorite") : handleError(400, "missing fields") 
     }
 
-   const { error } = schema.validate(req.body);
+   const { error } = schema(req.body);
     if (error) {
       handleError(400, `${error.message}`);
     }
@@ -69,7 +69,7 @@ exports.updateFavorite = catchAsync(async (req, res) => {
       return req.route.methods.patch ? handleError(400, "missing field favorite") : handleError(400, "missing fields") 
     }
 
-   const { error } = schema.validate(req.body);
+   const { error } = schema(req.body);
     if (error) {
       handleError(400, `${error.message}`);
     }
