@@ -1,8 +1,8 @@
 const app = require("./app");
 const mongoose = require("mongoose");
-const { MONGO_URL, PORT } = process.env;
+const { DB_URL, PORT } = process.env;
 mongoose
-  .connect(MONGO_URL)
+  .connect(DB_URL)
   .then(() => {
     console.log("Database connection successful");
     app.listen(PORT);
