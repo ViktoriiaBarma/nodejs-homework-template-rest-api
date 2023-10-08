@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { handleError, catchAsync } = require("../utils");
 const { SECRET_JWT } = process.env;
-const { User } = require("../models/user");
+const  User  = require("../models/user");
 
 
 

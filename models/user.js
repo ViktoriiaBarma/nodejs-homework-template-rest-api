@@ -5,7 +5,11 @@ const subscriptions = ["starter", "pro", "business"];
 
 const userSchema = new Schema(
   {
-    password: {
+    name: {
+      type: String,
+      required: [true, "Set name for contact"],
+    },
+     password: {
       type: String,
       required: [true, "Set password for user"],
     },
@@ -19,14 +23,14 @@ const userSchema = new Schema(
       enum: subscriptions,
       default: "starter",
     },
-    token: {
-      type: String,
-      default: null,
-    },
   },
   { versionKey: false, timestamps: true }
 );
 
+
 const User = model("user", userSchema);
 
+
 module.exports = User;
+
+
