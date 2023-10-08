@@ -1,11 +1,14 @@
 const app = require("./app");
 const mongoose = require("mongoose");
-const { DB_URL, PORT } = process.env;
+const { URL } = process.env;
+console.log(process.env.URL)
+
 mongoose
-  .connect(DB_URL)
+  .connect(URL)
   .then(() => {
     console.log("Database connection successful");
-    app.listen(PORT);
+
+    app.listen(process.env.PORT);
     
   })
   .catch((error) => {

@@ -1,5 +1,5 @@
 const { Types } = require('mongoose');
-const Contact = require('../models/contact');
+const Contact = require('../models/contacts');
 const { catchAsync, handleError } = require('../utils');
 
 
