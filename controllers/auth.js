@@ -83,15 +83,15 @@ exports.logout = async (req, res) => {
   res.status(204).send();
 };
 
-// exports.subscription = async (req, res) => {
-//   const { id } = req.user;
-//   const { subscription } = req.body;
-//   await User.findByIdAndUpdate(id, { subscription });
+exports.subscription = async (req, res) => {
+  const { id } = req.user;
+  const { subscription } = req.body;
+  await User.findByIdAndUpdate(id, { subscription });
 
-//   res.json({
-//     id,
-//     subscription,
-//   });
-// };
+  res.json({
+    id,
+    subscription,
+  });
+};
 
 

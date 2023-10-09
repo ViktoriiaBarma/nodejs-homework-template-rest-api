@@ -3,9 +3,20 @@ const {  handleError, catchAsync } = require("../utils");
 
 
 exports.getContacts = catchAsync(async (req, res) => {
-   const contacts = await Contact.find();
+ const { _id: owner } = req.user;
+  const { page = 1, limit = 5, favorite } = req.query;
+  const skip = (page - 1) * limit;
+
+  const filter = { owner };
+  if (favorite === "true") {
+    filter.favorite = true;
+  }
+  const contacts = await Contact.find(filter,'-createAt -updateAt', {
+    favorite: true,
+    skip,
+    limit,
+  }).populate("owner", "name email");
   res.status(200).json(contacts);
-  console.log(contacts)
 });
 
 exports.getContactById = catchAsync(async (req, res) => {
@@ -19,8 +30,8 @@ exports.getContactById = catchAsync(async (req, res) => {
 });
 
 exports.addContact = catchAsync(async (req, res) => {
-
-  const newContact = await Contact.create(req.body);
+  const { _id: owner } = req.user;
+  const newContact = await Contact.create({ ...req.body, owner });
   res.status(201).json(newContact);
 });
 
