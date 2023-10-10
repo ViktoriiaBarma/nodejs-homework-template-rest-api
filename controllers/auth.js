@@ -4,14 +4,11 @@ const jwt = require("jsonwebtoken");
 const User  = require("../models/user");
 const { handleError, catchAsync } = require("../utils");
 
-const { SECRET_JWT, expiresIn } = process.env;
+const { SECRET_JWT } = process.env;
 
 
-exports.signup = catchAsync (async (req, res) => {
-  const { email, password } = req.body;
-  console.log(req.body);
-  
-
+exports.registr = catchAsync (async (req, res) => {
+   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
   if (user) {
@@ -19,8 +16,8 @@ exports.signup = catchAsync (async (req, res) => {
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
-
   const newUser = await User.create({ ...req.body, password: hashPassword });
+
   res.status(201).json({
     user: {
       email: newUser.email,
@@ -29,30 +26,29 @@ exports.signup = catchAsync (async (req, res) => {
   });
 });
 
-exports.login = catchAsync (async (req, res) => {
+exports.login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw handleError(401, "Not authorized");
+
+    throw handleError(401, "Email or password is wrong");
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
 
-
-  if (!passwordCompare) {
-    throw handleError(401, "Not authorized");
+  if (passwordCompare === false) {
+    throw handleError(401, "Email or password is wrong");
   }
 
   const payload = {
     id: user.id,
   };
-  console.log(SECRET_JWT)
+
 
   const { subscription } = user;
-    console.log(expiresIn)
-
+   
   const token = jwt.sign(payload, SECRET_JWT, {
     expiresIn: "24h",
   });
@@ -68,10 +64,9 @@ exports.login = catchAsync (async (req, res) => {
 
 
 exports.getCurrent = async (req, res) => {
-  const { name,email, subscription } = req.user;
+   const { email, subscription } = req.user;
 
   res.json({
-    name,
     email,
     subscription,
   });

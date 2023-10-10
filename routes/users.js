@@ -1,7 +1,7 @@
 const express = require("express");
 
 const { validateBody, authenticate } = require("../middelwares");
-const {  signupSchema, loginSchema, subscriptionSchema } = require("../validator/validate");
+const {  registerSchema, loginSchema, subscriptionSchema } = require("../validator/validate");
 
 
 const auth = require("../controllers/auth");
@@ -9,7 +9,7 @@ const auth = require("../controllers/auth");
 const router = express.Router();
 
 
-router.post("/signup", validateBody(signupSchema), auth.signup);
+router.post("/registr", validateBody(registerSchema), auth.registr);
 
 router.post("/login", validateBody(loginSchema), auth.login);
 

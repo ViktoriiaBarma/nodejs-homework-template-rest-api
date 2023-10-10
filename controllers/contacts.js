@@ -1,9 +1,8 @@
 const Contact = require("../models/contacts");
-const {  handleError, catchAsync } = require("../utils");
-
+const { handleError, catchAsync } = require("../utils");
 
 exports.getContacts = catchAsync(async (req, res) => {
- const { _id: owner } = req.user;
+  const { _id: owner } = req.user;
   const { page = 1, limit = 5, favorite } = req.query;
   const skip = (page - 1) * limit;
 
@@ -11,7 +10,7 @@ exports.getContacts = catchAsync(async (req, res) => {
   if (favorite === "true") {
     filter.favorite = true;
   }
-  const contacts = await Contact.find(filter,'-createAt -updateAt', {
+  const contacts = await Contact.find(filter, "-createAt -updateAt", {
     favorite: true,
     skip,
     limit,
@@ -47,28 +46,23 @@ exports.deleteContactById = catchAsync(async (req, res) => {
 exports.updateContactById = catchAsync(async (req, res) => {
   const { id } = req.params;
 
-
   const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
     new: true,
-  },
-  );
-console.log(updatedContact)
+  });
 
-    if (!updatedContact) {
+  if (!updatedContact) {
     throw handleError(404, "Not found");
   }
   res.status(200).json(updatedContact);
-
 });
 
 exports.updateFavorite = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const updateStatusContact  = await Contact.findByIdAndUpdate(id, req.body, {
+  const updateStatusContact = await Contact.findByIdAndUpdate(id, req.body, {
     new: true,
   });
-  if (!updateStatusContact ) {
+  if (!updateStatusContact) {
     throw handleError(404, "Not found");
   }
-  res.status(200).json(updateStatusContact );
+  res.status(200).json(updateStatusContact);
 });
-

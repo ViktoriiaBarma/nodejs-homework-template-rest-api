@@ -28,20 +28,16 @@ exports.isValidFavorite = (data) =>
     })
     .validate(data);
 
-exports.signupSchema = (data) =>
+exports.registerSchema = (data) =>
   Joi.object()
     .options({ abortEarly: false })
     .keys({
-      name: Joi.string().required().messages({
-        "string.base": `name should be a type of 'text'`,
-        "any.required": `missing required name field`,
-      }),
       email: Joi.string()
         .email()
         .required()
         .messages({ "any.required": `missing required email field` }),
-      password: Joi.string().min(8).required().messages({
-        "string.min": `password must be longer than 8 characters`,
+      password: Joi.string().min(5).required().messages({
+        "string.min": `password must be longer than 5 characters`,
         "any.required": `missing required password field`,
       }),
     })
@@ -55,8 +51,8 @@ exports.loginSchema = (data) =>
         .email()
         .required()
         .messages({ "any.required": `missing required email field` }),
-      password: Joi.string().min(8).required().messages({
-        "string.min": `password must be longer than 8 characters`,
+      password: Joi.string().min(5).required().messages({
+        "string.min": `password must be longer than 5 characters`,
         "any.required": `missing required password field`,
       }),
     }).validate(data);
