@@ -19,10 +19,13 @@ const userSchema = new Schema(
       enum: subscriptions,
       default: "starter",
     },
+     token: {
+      type: String,
+      default: null,
+    },
   },
   { versionKey: false, timestamps: true }
 );
-
 
 const User = model("user", userSchema);
 

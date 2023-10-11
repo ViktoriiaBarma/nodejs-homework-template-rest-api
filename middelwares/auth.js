@@ -13,7 +13,6 @@ exports.authenticate = catchAsync(async (req, res, next) => {
 
     try {
       const { id } = jwt.verify(token, SECRET_JWT);
-
       return id;
     } catch (err) {
       console.log(err.message);
@@ -23,16 +22,15 @@ exports.authenticate = catchAsync(async (req, res, next) => {
   };
 
   const userId = checkToken(token);
-
   const currentUser = await User.findById(userId);
+  console.log(currentUser.token)
 
-  if (!currentUser) throw handleError(401, "Not authorized");
+  if (!currentUser|| !currentUser.token || currentUser.token !== token) throw handleError(401, "Not authorized");
 
   req.user = currentUser;
 
   next();
 });
-
 
 
  

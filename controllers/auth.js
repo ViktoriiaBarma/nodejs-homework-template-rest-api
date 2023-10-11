@@ -7,7 +7,7 @@ const { handleError, catchAsync } = require("../utils");
 const { SECRET_JWT } = process.env;
 
 
-exports.registr = catchAsync (async (req, res) => {
+exports.register = catchAsync (async (req, res) => {
    const { email, password } = req.body;
   const user = await User.findOne({ email });
 

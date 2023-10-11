@@ -9,7 +9,7 @@ const auth = require("../controllers/auth");
 const router = express.Router();
 
 
-router.post("/registr", validateBody(registerSchema), auth.registr);
+router.post("/register", validateBody(registerSchema), auth.register);
 
 router.post("/login", validateBody(loginSchema), auth.login);
 
