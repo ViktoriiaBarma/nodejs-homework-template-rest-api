@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { validateBody, authenticate } = require("../middelwares");
+const { validateBody, authenticate, loading } = require("../middelwares");
 const {  registerSchema, loginSchema, subscriptionSchema } = require("../validator/validate");
 
 
@@ -23,5 +23,13 @@ router.patch(
   validateBody(subscriptionSchema),
   auth.subscription
 );
+
+router.patch(
+  "/avatars",
+  authenticate.authenticate,
+  loading.single("avatar"),
+  auth.updateAvatar
+);
+
 
 module.exports = router;
