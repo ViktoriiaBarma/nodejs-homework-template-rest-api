@@ -97,27 +97,31 @@ exports.subscription = async (req, res) => {
 
 exports.updateAvatar = async (req, res) => {
   const { _id } = req.user;
-  // console.log(req.file)
-  const { path: tempUpload, originalname } = req.file;
-  const filename = `${_id}_${originalname}`;
-  const resultUpload = path.join(avatarsDir, filename);
-  console.log(filename)
 
-  Jimp.read(tempUpload, async function (err, test) {
-    if (err) throw err;
-    test.resize(250, 250).write(resultUpload);
-    try {
-      await fs.unlink(tempUpload);
-    } catch (error) {
-      console.error(`${tempUpload}: ${error.message}`);
-    }
-  });
+  if (req.file === undefined) {
+    res.status(401).json(
+{     message: 'Not authorized'
+}    )
+  } else {
+    const { path: destination, originalname } = req.file;
+    const filename = `${_id}_${originalname}`;
+    const resultUpload = path.join(avatarsDir, filename);
 
-  const avatarURL = path.join("avatars", filename);
-  // console.log(avatarURL)
-  await User.findByIdAndUpdate(_id, { avatarURL });
+    Jimp.read(destination, async function (err, test) {
+      if (err) throw err;
+      test.resize(250, 250).write(resultUpload);
+      try {
+        await fs.unlink(destination);
+      } catch (error) {
+        console.error(`${destination}: ${error.message}`);
+      }
+    });
 
-  res.json({
-    avatarURL,
-  });
+    const avatarURL = path.join("avatars", filename);
+    await User.findByIdAndUpdate(_id, { avatarURL });
+
+    res.json({
+      avatarURL,
+    });
+  }
 };
