@@ -69,3 +69,9 @@ exports.subscriptionSchema = (data) =>
         "any.required": `missing required subscription field`,
       }),
   }).validate(data);
+  exports.userEmailSchema = (data) => Joi.object({
+  email: Joi.string()
+    .email()
+    .required()
+    .messages({ 'any.required': 'Missing required field email' }),
+}).validate(data);
