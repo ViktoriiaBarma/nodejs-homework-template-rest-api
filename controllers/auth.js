@@ -2,14 +2,15 @@ const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
 const path = require("path");
-const uuid = require('uuid')
+const uuid = require('uuid').v4;
 const fs = require("fs").promises;
 const Jimp = require("jimp");
 
 const User  = require("../models/user");
-const { handleError, catchAsync } = require("../utils");
+const { handleError, catchAsync, sendEmail } = require("../utils");
 
-const { SECRET_JWT, BASE_URL } = process.env;
+
+const { SECRET_JWT, BASE_URL} = process.env;
 const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 
 
@@ -38,7 +39,7 @@ exports.register = catchAsync (async (req, res) => {
     html: `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Click verify email</a>`
   }
 
-  await sendMail(verifyEmail)
+  await sendEmail(verifyEmail)
 
   res.status(201).json({
     user: {
@@ -64,14 +65,42 @@ exports.verify = async (req, res) => {
   });
 };
 
+exports.resendVerify = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw handleError(404, 'User not found');
+  }
+  if (user.verify) {
+    throw handleError(400, 'Verification has already been passed');
+  }
+
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a target="_blank" href="${BASE_URL}/users/verify/${user.verificationToken}">Click verify email</a>`
+  };
+
+  await sendEmail(verifyEmail);
+
+  res.json({
+    message: 'Verification email sent',
+  });
+};
+
 exports.login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
 
   if (!user) {
-
     throw handleError(401, "Email or password is wrong");
+  }
+
+  if (!user.verify) {
+    throw handleError(401, "Email not verify");
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
@@ -131,8 +160,8 @@ exports.updateAvatar = async (req, res) => {
   const { _id } = req.user;
 
   if (req.file === undefined) {
-    res.status(401).json(
-{     message: 'Not authorized'
+    res.status(400).json(
+{     message: 'File not downloaded'
 }    )
   } else {
     const { path: destination, originalname } = req.file;
