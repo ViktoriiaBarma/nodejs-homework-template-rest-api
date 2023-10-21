@@ -7,7 +7,8 @@ const fs = require("fs").promises;
 const Jimp = require("jimp");
 
 const User  = require("../models/user");
-const { handleError, catchAsync, sendEmail } = require("../utils");
+const { handleError, catchAsync } = require("../utils");
+const sendEmail = require('../utils/sendEmail');
 
 
 const { SECRET_JWT, BASE_URL} = process.env;
@@ -30,18 +31,18 @@ exports.register = catchAsync (async (req, res) => {
     ...req.body,
     password: hashPassword,
     avatarURL,
-    verificationToken,
+    verificationToken: verificationToken,
   });
 
   const verifyEmail = {
     to: email,
-    subject: "Verify email",
+    subject: 'Verify email',
     html: `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Click verify email</a>`
   }
 
   await sendEmail(verifyEmail)
 
-  res.status(201).json({
+ res.status(201).json({
     user: {
       email: newUser.email,
       subscription: newUser.subscription,
@@ -49,7 +50,7 @@ exports.register = catchAsync (async (req, res) => {
   });
 });
 
-exports.verify = async (req, res) => {
+exports.verify = catchAsync (async (req, res) => {
   const { verificationToken } = req.params;
 
   const user = await User.findOne({ verificationToken });
@@ -63,9 +64,9 @@ exports.verify = async (req, res) => {
   res.json({
     message: 'Verification successful',
   });
-};
+});
 
-exports.resendVerify = async (req, res) => {
+exports.resendVerify = catchAsync (async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email });
@@ -88,7 +89,7 @@ exports.resendVerify = async (req, res) => {
   res.json({
     message: 'Verification email sent',
   });
-};
+});
 
 exports.login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
